@@ -51,7 +51,7 @@ func main() {
 	_ = flag.Set("logtostderr", "true")
 	// Starting performance collecting http server
 	go func() {
-		glog.Info(http.ListenAndServe(fmt.Sprintf(":%d", perfPort), nil))
+		glog.Info(http.ListenAndServe(fmt.Sprintf("127.0.0.1:%d", perfPort), nil))
 	}()
 	// Initializing publisher
 	var publisher pub.Publisher
