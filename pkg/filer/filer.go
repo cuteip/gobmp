@@ -43,7 +43,7 @@ func (p *pubfiler) Stop() {
 
 // NewFiler returns a new instance of message filer
 func NewFiler(file string) (pub.Publisher, error) {
-	f, err := os.Create(file)
+	f, err := os.OpenFile(file, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return nil, err
 	}
