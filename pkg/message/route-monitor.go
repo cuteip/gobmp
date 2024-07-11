@@ -69,12 +69,12 @@ func (p *producer) produceRouteMonitorMessage(msg bmp.Message) {
 			}
 			msgs = append(msgs, msg...)
 		}
-		msg, err := p.nlri(AddPrefix, msg.PeerHeader, routeMonitorMsg.Update)
-		if err != nil {
-			glog.Errorf("failed to produce original NLRI Withdraw message with error: %+v", err)
-			return
-		}
-		msgs = append(msgs, msg...)
+		// msg, err := p.nlri(AddPrefix, msg.PeerHeader, routeMonitorMsg.Update)
+		// if err != nil {
+		// 	glog.Errorf("failed to produce original NLRI Withdraw message with error: %+v", err)
+		// 	return
+		// }
+		// msgs = append(msgs, msg...)
 		// Loop through and publish all collected messages
 		for _, m := range msgs {
 			if err := p.marshalAndPublish(&m, t, []byte(m.RouterHash), false); err != nil {
