@@ -15,10 +15,12 @@ require (
 	github.com/eapache/go-resiliency v1.2.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
+	github.com/felixge/fgprof v0.9.4 // indirect
 	github.com/frankban/quicktest v1.14.4 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
+	github.com/google/pprof v0.0.0-20240711041743-f6c9dda6c6da // indirect
 	github.com/hashicorp/go-uuid v1.0.2 // indirect
 	github.com/jcmturner/gofork v1.0.0 // indirect
 	github.com/klauspost/compress v1.16.7 // indirect
