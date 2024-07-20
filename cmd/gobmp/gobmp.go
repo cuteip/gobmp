@@ -11,6 +11,7 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 
+	"github.com/felixge/fgprof"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/dumper"
 	"github.com/sbezverk/gobmp/pkg/filer"
@@ -50,6 +51,7 @@ func main() {
 	flag.Parse()
 	_ = flag.Set("logtostderr", "true")
 	// Starting performance collecting http server
+	http.DefaultServeMux.Handle("/debug/fgprof", fgprof.Handler())
 	go func() {
 		glog.Info(http.ListenAndServe(fmt.Sprintf("127.0.0.1:%d", perfPort), nil))
 	}()

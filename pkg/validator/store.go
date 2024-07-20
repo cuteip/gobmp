@@ -2,9 +2,10 @@ package validator
 
 import (
 	"encoding/binary"
-	"encoding/json"
 	"fmt"
 	"os"
+
+	"github.com/goccy/go-json"
 
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"

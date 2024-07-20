@@ -2,10 +2,7 @@ package bgp
 
 import (
 	"bytes"
-	"crypto/md5"
 	"encoding/binary"
-	"encoding/hex"
-	"encoding/json"
 	"net"
 	"reflect"
 	"strconv"
@@ -186,13 +183,8 @@ func UnmarshalBGPBaseAttributes(b []byte) (*BaseAttributes, error) {
 		}
 		p += int(l)
 	}
-	// Calculating hash of all recovered base attributes
-	ba, err := json.Marshal(baseAttr)
-	if err != nil {
-		return nil, err
-	}
-	s := md5.Sum(ba)
-	baseAttr.BaseAttrHash = hex.EncodeToString(s[:])
+	// ignore hash
+	baseAttr.BaseAttrHash = "-"
 
 	return &baseAttr, nil
 }

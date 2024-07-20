@@ -2,8 +2,9 @@ package sr
 
 import (
 	"encoding/binary"
-	"encoding/json"
 	"fmt"
+
+	"github.com/goccy/go-json"
 
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/base"
@@ -209,7 +210,7 @@ type AdjISISFlags struct {
 	PFlag bool `json:"p_flag"`
 }
 
-//GetAdjSIDFlagByte returns a byte represenation for ISIS flags
+// GetAdjSIDFlagByte returns a byte represenation for ISIS flags
 func (f *AdjISISFlags) GetAdjSIDFlagByte() byte {
 	b := byte(0)
 	if f.FFlag {
@@ -249,7 +250,7 @@ type AdjOSPFFlags struct {
 	PFlag bool `json:"p_flag"`
 }
 
-//GetAdjSIDFlagByte returns a byte represenation for OSPF flags
+// GetAdjSIDFlagByte returns a byte represenation for OSPF flags
 func (f *AdjOSPFFlags) GetAdjSIDFlagByte() byte {
 	b := byte(0)
 
@@ -272,7 +273,7 @@ func (f *AdjOSPFFlags) GetAdjSIDFlagByte() byte {
 	return b
 }
 
-//GetAdjSIDFlagByte returns a byte represenation for an Unknown Protocol
+// GetAdjSIDFlagByte returns a byte represenation for an Unknown Protocol
 func (f *UnknownProtoFlags) GetAdjSIDFlagByte() byte {
 	return f.Flags
 }

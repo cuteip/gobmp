@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"time"
 
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"
@@ -83,36 +84,67 @@ func (srv *bmpServer) bmpWorker(client net.Conn) {
 		close(parsStop)
 		close(prodStop)
 	}()
-	for {
-		headerMsg := make([]byte, bmp.CommonHeaderLength)
-		if _, err := io.ReadAtLeast(client, headerMsg, bmp.CommonHeaderLength); err != nil {
-			glog.Errorf("fail to read from client %+v with error: %+v", client.RemoteAddr(), err)
-			return
-		}
-		// Recovering common header first
-		header, err := bmp.UnmarshalCommonHeader(headerMsg[:bmp.CommonHeaderLength])
-		if err != nil {
-			glog.Errorf("fail to recover BMP message Common Header with error: %+v", err)
-			continue
-		}
-		// Allocating space for the message body
-		msg := make([]byte, int(header.MessageLength)-bmp.CommonHeaderLength)
-		if _, err := io.ReadFull(client, msg); err != nil {
-			glog.Errorf("fail to read from client %+v with error: %+v", client.RemoteAddr(), err)
-			return
-		}
 
-		fullMsg := make([]byte, int(header.MessageLength))
-		copy(fullMsg, headerMsg)
-		copy(fullMsg[bmp.CommonHeaderLength:], msg)
-		// Sending information to the server only in intercept mode
-		if srv.intercept {
-			if _, err := server.Write(fullMsg); err != nil {
-				glog.Errorf("fail to write to server %+v with error: %+v", server.RemoteAddr(), err)
+	rateLimitPeriod := 1 * time.Second
+	ticker := time.NewTicker(rateLimitPeriod)
+	defer ticker.Stop()
+	msgCount := 0
+	maxMsgPerTicker := 10000
+	isRateLimitExceededPrevious := false
+	isRateLimitExceededCurrent := false
+	for {
+		select {
+		case <-ticker.C:
+			if msgCount < maxMsgPerTicker {
+				isRateLimitExceededPrevious = false
+			}
+			msgCount = 0 // reset
+			if isRateLimitExceededCurrent {
+				glog.Infof("rate limit exceeded (%d/%s), waiting for next tick...", maxMsgPerTicker, rateLimitPeriod.String())
+				isRateLimitExceededCurrent = false
+				isRateLimitExceededPrevious = true
+			}
+		default:
+			headerMsg := make([]byte, bmp.CommonHeaderLength)
+			if _, err := io.ReadAtLeast(client, headerMsg, bmp.CommonHeaderLength); err != nil {
+				glog.Errorf("fail to read from client %+v with error: %+v", client.RemoteAddr(), err)
 				return
 			}
+			msgCount++
+			// Recovering common header first
+			header, err := bmp.UnmarshalCommonHeader(headerMsg[:bmp.CommonHeaderLength])
+			if err != nil {
+				glog.Errorf("fail to recover BMP message Common Header with error: %+v", err)
+				continue
+			}
+
+			// ピア確立時の大量の Update Message を無視したいので、ある期間でレートリミット超過していたら次の期間も超過扱いとする
+			if isRateLimitExceededPrevious || maxMsgPerTicker <= msgCount {
+				// レートリミット超過
+				io.CopyN(io.Discard, client, int64(header.MessageLength)-bmp.CommonHeaderLength)
+				isRateLimitExceededCurrent = true
+				continue
+			}
+
+			// Allocating space for the message body
+			msg := make([]byte, int(header.MessageLength)-bmp.CommonHeaderLength)
+			if _, err := io.ReadFull(client, msg); err != nil {
+				glog.Errorf("fail to read from client %+v with error: %+v", client.RemoteAddr(), err)
+				return
+			}
+
+			fullMsg := make([]byte, int(header.MessageLength))
+			copy(fullMsg, headerMsg)
+			copy(fullMsg[bmp.CommonHeaderLength:], msg)
+			// Sending information to the server only in intercept mode
+			if srv.intercept {
+				if _, err := server.Write(fullMsg); err != nil {
+					glog.Errorf("fail to write to server %+v with error: %+v", server.RemoteAddr(), err)
+					return
+				}
+			}
+			parserQueue <- fullMsg
 		}
-		parserQueue <- fullMsg
 	}
 }
 

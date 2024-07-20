@@ -2,8 +2,9 @@ package srv6
 
 import (
 	"encoding/binary"
-	"encoding/json"
 	"fmt"
+
+	"github.com/goccy/go-json"
 
 	"github.com/golang/glog"
 	"github.com/sbezverk/tools"
