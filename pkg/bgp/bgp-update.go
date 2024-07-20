@@ -3,8 +3,9 @@ package bgp
 import (
 	"crypto/md5"
 	"encoding/binary"
-	"encoding/json"
 	"fmt"
+
+	"github.com/goccy/go-json"
 
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bgpls"

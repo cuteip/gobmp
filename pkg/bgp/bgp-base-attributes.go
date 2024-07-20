@@ -5,10 +5,11 @@ import (
 	"crypto/md5"
 	"encoding/binary"
 	"encoding/hex"
-	"encoding/json"
 	"net"
 	"reflect"
 	"strconv"
+
+	"github.com/goccy/go-json"
 
 	"github.com/golang/glog"
 	"github.com/sbezverk/tools"

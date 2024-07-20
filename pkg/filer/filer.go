@@ -1,8 +1,9 @@
 package filer
 
 import (
-	"encoding/json"
 	"os"
+
+	"github.com/goccy/go-json"
 
 	"github.com/sbezverk/gobmp/pkg/pub"
 )

@@ -1,9 +1,10 @@
 package message
 
 import (
-	"encoding/json"
 	"reflect"
 	"testing"
+
+	"github.com/goccy/go-json"
 
 	"github.com/go-test/deep"
 	"github.com/sbezverk/gobmp/pkg/base"

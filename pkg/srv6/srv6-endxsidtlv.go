@@ -2,9 +2,10 @@ package srv6
 
 import (
 	"encoding/binary"
-	"encoding/json"
 	"fmt"
 	"net"
+
+	"github.com/goccy/go-json"
 
 	"github.com/golang/glog"
 	"github.com/sbezverk/tools"
@@ -16,7 +17,9 @@ const (
 )
 
 // EndXSIDFlags defines a structure of SRv6 End X SID's Flags
-//  0 1 2 3 4 5 6 7
+//
+//	0 1 2 3 4 5 6 7
+//
 // +-+-+-+-+-+-+-+-+
 // |B|S|P| Reserved|
 // +-+-+-+-+-+-+-+-+
