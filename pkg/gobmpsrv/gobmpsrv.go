@@ -85,7 +85,8 @@ func (srv *bmpServer) bmpWorker(client net.Conn) {
 		close(prodStop)
 	}()
 
-	ticker := time.NewTicker(1 * time.Second)
+	rateLimitPeriod := 1 * time.Second
+	ticker := time.NewTicker(rateLimitPeriod)
 	defer ticker.Stop()
 	msgCount := 0
 	maxMsgPerTicker := 10000
@@ -99,7 +100,7 @@ func (srv *bmpServer) bmpWorker(client net.Conn) {
 			}
 			msgCount = 0 // reset
 			if isRateLimitExceededCurrent {
-				glog.Infof("rate limit exceeded, waiting for next tick...")
+				glog.Infof("rate limit exceeded (%d/%s), waiting for next tick...", maxMsgPerTicker, rateLimitPeriod.String())
 				isRateLimitExceededCurrent = false
 				isRateLimitExceededPrevious = true
 			}
