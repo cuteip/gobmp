@@ -1,10 +1,12 @@
 module github.com/sbezverk/gobmp
 
-go 1.19
+go 1.22
 
 require (
 	github.com/Shopify/sarama v1.27.0
+	github.com/felixge/fgprof v0.9.4
 	github.com/go-test/deep v1.0.8
+	github.com/goccy/go-json v0.10.3
 	github.com/golang/glog v1.1.1
 	github.com/nats-io/nats.go v1.28.0
 	github.com/sbezverk/tools v0.0.0-20230714051746-80037ac202cf
@@ -15,9 +17,7 @@ require (
 	github.com/eapache/go-resiliency v1.2.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
-	github.com/felixge/fgprof v0.9.4 // indirect
 	github.com/frankban/quicktest v1.14.4 // indirect
-	github.com/goccy/go-json v0.10.3 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/google/pprof v0.0.0-20240711041743-f6c9dda6c6da // indirect
