@@ -1,6 +1,7 @@
 package filer
 
 import (
+	"bufio"
 	"os"
 
 	"github.com/goccy/go-json"
@@ -16,7 +17,7 @@ type MsgOut struct {
 }
 
 type pubfiler struct {
-	file *os.File
+	writer *bufio.Writer
 }
 
 func (p *pubfiler) PublishMessage(msgType int, msgHash []byte, msg []byte) error {
@@ -30,7 +31,7 @@ func (p *pubfiler) PublishMessage(msgType int, msgHash []byte, msg []byte) error
 		return err
 	}
 	b = append(b, '\n')
-	_, err = p.file.Write(b)
+	_, err = p.writer.Write(b)
 	if err != nil {
 		return err
 	}
@@ -39,7 +40,8 @@ func (p *pubfiler) PublishMessage(msgType int, msgHash []byte, msg []byte) error
 }
 
 func (p *pubfiler) Stop() {
-	p.file.Close()
+	// ignore error
+	_ = p.writer.Flush()
 }
 
 // NewFiler returns a new instance of message filer
@@ -48,8 +50,9 @@ func NewFiler(file string) (pub.Publisher, error) {
 	if err != nil {
 		return nil, err
 	}
+	bufferSize := 10 * 1024 * 1024 // 10 MB
 	pw := pubfiler{
-		file: f,
+		writer: bufio.NewWriterSize(f, bufferSize),
 	}
 
 	return &pw, nil
