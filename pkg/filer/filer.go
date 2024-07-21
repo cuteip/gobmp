@@ -50,7 +50,7 @@ func NewFiler(file string) (pub.Publisher, error) {
 	if err != nil {
 		return nil, err
 	}
-	bufferSize := 10 * 1024 * 1024 // 10 MB
+	bufferSize := 1 * 1024 * 1024 // 1 MB
 	pw := pubfiler{
 		writer: bufio.NewWriterSize(f, bufferSize),
 	}
