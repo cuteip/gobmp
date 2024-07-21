@@ -23,15 +23,16 @@ import (
 )
 
 var (
-	dstPort   int
-	srcPort   int
-	perfPort  int
-	kafkaSrv  string
-	natsSrv   string
-	intercept string
-	splitAF   string
-	dump      string
-	file      string
+	dstPort     int
+	srcPort     int
+	perfPort    int
+	kafkaSrv    string
+	natsSrv     string
+	intercept   string
+	splitAF     string
+	dump        string
+	file        string
+	fileBufSize int
 )
 
 func init() {
@@ -45,6 +46,7 @@ func init() {
 	flag.IntVar(&perfPort, "performance-port", 56767, "port used for performance debugging")
 	flag.StringVar(&dump, "dump", "", "Dump resulting messages to file when \"dump=file\", to standard output when \"dump=console\" or to NATS when \"dump=nats\"")
 	flag.StringVar(&file, "msg-file", "/tmp/messages.json", "Full path anf file name to store messages when \"dump=file\"")
+	flag.IntVar(&fileBufSize, "file-buf-size", 4096, "file writer buffer size")
 }
 
 func main() {
@@ -60,7 +62,7 @@ func main() {
 	var err error
 	switch strings.ToLower(dump) {
 	case "file":
-		publisher, err = filer.NewFiler(file)
+		publisher, err = filer.NewFiler(file, fileBufSize)
 		if err != nil {
 			glog.Errorf("failed to initialize file publisher with error: %+v", err)
 			os.Exit(1)

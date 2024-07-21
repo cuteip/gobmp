@@ -45,14 +45,13 @@ func (p *pubfiler) Stop() {
 }
 
 // NewFiler returns a new instance of message filer
-func NewFiler(file string) (pub.Publisher, error) {
+func NewFiler(file string, bufSize int) (pub.Publisher, error) {
 	f, err := os.OpenFile(file, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return nil, err
 	}
-	bufferSize := 1 * 1024 * 1024 // 1 MB
 	pw := pubfiler{
-		writer: bufio.NewWriterSize(f, bufferSize),
+		writer: bufio.NewWriterSize(f, bufSize),
 	}
 
 	return &pw, nil
