@@ -95,14 +95,13 @@ func (srv *bmpServer) bmpWorker(client net.Conn) {
 	for {
 		select {
 		case <-ticker.C:
+			isRateLimitExceededPrevious = isRateLimitExceededCurrent
 			if msgCount < maxMsgPerTicker {
-				isRateLimitExceededPrevious = false
+				isRateLimitExceededCurrent = false
 			}
 			msgCount = 0 // reset
 			if isRateLimitExceededCurrent {
 				glog.Infof("rate limit exceeded (%d/%s), waiting for next tick...", maxMsgPerTicker, rateLimitPeriod.String())
-				isRateLimitExceededCurrent = false
-				isRateLimitExceededPrevious = true
 			}
 		default:
 			headerMsg := make([]byte, bmp.CommonHeaderLength)
@@ -122,7 +121,9 @@ func (srv *bmpServer) bmpWorker(client net.Conn) {
 			if isRateLimitExceededPrevious || maxMsgPerTicker <= msgCount {
 				// レートリミット超過
 				io.CopyN(io.Discard, client, int64(header.MessageLength)-bmp.CommonHeaderLength)
-				isRateLimitExceededCurrent = true
+				if maxMsgPerTicker <= msgCount {
+					isRateLimitExceededCurrent = true
+				}
 				continue
 			}
 
